@@ -17,7 +17,8 @@ void loop() {
 
 
   //Move forward
-   drive.turnLeft();
+   drive.LineFollowing();
+   
     i++;
   //Brake
   /*if (i==3)
@@ -27,7 +28,7 @@ void loop() {
   if(i==5){
     drive.init();
   }*/
-  delay(1000);
+  
     
    /* 
     //right_wheel.detatch(9);
