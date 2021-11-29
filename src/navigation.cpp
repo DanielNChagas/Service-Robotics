@@ -43,7 +43,7 @@ bool Navigator::hasNextTurn()
 // Navigator::MazePath
 
 constexpr int Navigator::MazePath::numExplorePathTurns;
-constexpr int Navigator::MazePath::explorePathTurns[20][2];
+constexpr int Navigator::MazePath::explorePathTurns[NUM_EXPLORE_PATH_TURNS][2];
 constexpr int Navigator::MazePath::numHomePathTurns[NUM_NODES];
 constexpr int Navigator::MazePath::homePathTurns[NUM_NODES - 1][14][2];
 
