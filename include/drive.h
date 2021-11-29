@@ -16,9 +16,15 @@ private:
     Servo right_wheel;  //servo object to control the right wheel
     Servo left_wheel;   //servo object to control the left wheel
 
-    QTRSensors qtr;
+    QTRSensors qtrCentral;
+    QTRSensors qtrOutter;
 
-    uint16_t sensorValues[SENSOR_COUNT];
+    uint16_t outterSensors[2];
+    uint16_t centralSensors[3];
+
+    float Kp = 0.035; 
+    float Ki = 0.0001;
+    float Kd = 0.01;
 
     
 public:
@@ -27,6 +33,11 @@ public:
     uint16_t outterLeftSensor;
     uint16_t leftSensor;
     uint16_t middleSensor;
+
+    int P;
+    int I=0;
+    int D;
+    float lastError=0;
 
     void init();
     void driveForward();
@@ -39,6 +50,8 @@ public:
     void getLineSensorValue();
     void LineFollowing();
     void BasicLineFollowing();
+
+    int controller();
     
 };
 
