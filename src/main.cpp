@@ -19,7 +19,7 @@ void loop() {
   //Move forward
    drive.LineFollowing();
    
-    i++;
+    
   //Brake
   /*if (i==3)
   {
