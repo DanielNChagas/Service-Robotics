@@ -2,22 +2,36 @@
 #include <Servo.h>
 #include <QTRSensors.h>
 #include "drive.h"
+#include "navigation.h"
+
+using namespace std;
 
 Drive drive;  //iitializes the class responsible for driving the robot
+//Navigator navigation;
 
 int i=0;
  
 void setup() {
   drive.init();
-
+  pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
 }
 
 void loop() {
-
-
+   /*Serial.println("--------------------------");
+    Serial.print("Outter Left:");
+    Serial.print(drive.outterLeftSensor);
+    Serial.print("Left:");
+    Serial.print(drive.leftSensor);
+    Serial.print("Middle:");
+    Serial.print(drive.middleSensor);
+    Serial.print("Right:");
+    Serial.print(drive.rightSensor);
+    Serial.print("Outter Right:");
+    Serial.println(drive.outterRightSensor);*/
+    drive.LineFollowing();
   //Move forward
-   drive.LineFollowing();
+   //drive.LineFollowing(navigation);
    
     
   //Brake

@@ -25,34 +25,66 @@ void Drive::stop(){
 }
 
 void Drive::turnRight(){
+
+    while(outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
+        getLineSensorValue();
     delay(100);
     right_wheel.write(0);
     left_wheel.write(0);
     I=0;
-    delay(1100);
+    getLineSensorValue();
+    if(middleSensor>LIGHT_THRESHOLD){
+        while( leftSensor > LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD)
+            getLineSensorValue();
+    }
+    else{
+         while(leftSensor < LIGHT_THRESHOLD)
+            getLineSensorValue();
+    }
     /*while((outterRightSensor > LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD || leftSensor < LIGHT_THRESHOLD) && middleSensor>LIGHT_THRESHOLD && rightSensor < LIGHT_THRESHOLD){
         getLineSensorValue();
-        /*if (middleSensor < LIGHT_THRESHOLD)
+        if (middleSensor < LIGHT_THRESHOLD)
             left_wheel.write(80);  
     }*/
     
 }
 
 void Drive::turnLeft(){
+    while(outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
+        getLineSensorValue();
     delay(100);
     right_wheel.write(180);
     left_wheel.write(180);
     I=0;
-    delay(1100);
+
+    getLineSensorValue();
+    if(middleSensor > LIGHT_THRESHOLD){
+        while(rightSensor < LIGHT_THRESHOLD ||outterRightSensor < LIGHT_THRESHOLD)
+            getLineSensorValue();
+    }
+    else{
+        while(rightSensor < LIGHT_THRESHOLD )
+            getLineSensorValue();
+    }
+    
     
     /*while((outterRightSensor > LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD || rightSensor < LIGHT_THRESHOLD) && middleSensor > LIGHT_THRESHOLD && leftSensor <LIGHT_THRESHOLD){
         getLineSensorValue();
-        /*if (middleSensor < LIGHT_THRESHOLD)
+        if (middleSensor < LIGHT_THRESHOLD)
             right_wheel.write(100); 
     }*/
 }
 
-void Drive::turnSlightlyRight(){
+void Drive::uTurn(){
+    right_wheel.write(180);
+    left_wheel.write(180);
+    I=0;
+    delay(1100);
+    while(rightSensor < LIGHT_THRESHOLD)
+        getLineSensorValue();
+}
+
+/*void Drive::turnSlightlyRight(){
     right_wheel.write(100);
     left_wheel.write(70);
 }
@@ -60,19 +92,24 @@ void Drive::turnSlightlyRight(){
 void Drive::turnSlightlyLeft(){
     right_wheel.write(110);
     left_wheel.write(80);
-}
+}*/
 
 void Drive::getLineSensorValue(){
     qtrCentral.read(centralSensors);
     qtrOutter.read(outterSensors);
-
+    
+    /*Serial.print("sensors:");
+    Serial.print(centralSensors[0]);
+    Serial.print(centralSensors[1]);
+    Serial.println(centralSensors[2]);*/
+    
     rightSensor = centralSensors[0];
     middleSensor = centralSensors[1];
     leftSensor = centralSensors[2];
     outterRightSensor = outterSensors[0];
     outterLeftSensor = outterSensors[1];
 
-    Serial.print("Outter Left:");
+    /*Serial.print("Outter Left:");
     Serial.print(outterLeftSensor);
     Serial.print("Left:");
     Serial.print(leftSensor);
@@ -81,14 +118,20 @@ void Drive::getLineSensorValue(){
     Serial.print("Right:");
     Serial.print(rightSensor);
     Serial.print("Outter Right:");
-    Serial.println(outterRightSensor);
+    Serial.println(outterRightSensor);*/
 
+}
+
+bool Drive::missingLine(){
+    Serial.println(outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && rightSensor < LIGHT_THRESHOLD && leftSensor < LIGHT_THRESHOLD && middleSensor < LIGHT_THRESHOLD);
+    return (outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && rightSensor < LIGHT_THRESHOLD && leftSensor < LIGHT_THRESHOLD && middleSensor < LIGHT_THRESHOLD );
 }
 
 void Drive::LineFollowing(){
     getLineSensorValue();
-
-    if (outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD){
+    bool noLine=missingLine();
+    uint64_t currentTime=millis();
+    if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) || currentTime-previousTime < 2000){
 
         int speed=controller();
         
@@ -112,17 +155,41 @@ void Drive::LineFollowing(){
         left_wheel.write(motorspeedLeft);
     }
         //BasicLineFollowing();
-    else if (outterRightSensor > LIGHT_THRESHOLD && outterLeftSensor > LIGHT_THRESHOLD)
-        stop();
-    else if (leftSensor > LIGHT_THRESHOLD && outterLeftSensor > LIGHT_THRESHOLD)
+    // In case the robot finds an intersection, a 90 degree turn or a dead end
+    else if (((leftSensor > LIGHT_THRESHOLD && outterLeftSensor > LIGHT_THRESHOLD) || (outterRightSensor > LIGHT_THRESHOLD && rightSensor > LIGHT_THRESHOLD) || noLine) && currentTime-previousTime > 2000){
+        //Serial.print(turn);
+        /*if (navigation.hasNextTurn())
+        {*/
+        digitalWrite(LED_BUILTIN, HIGH);
+           int turn=nextTurn();
+            //Serial.println(turn);
+           
+            if(turn==0){
+                delay(2000);
+            }
+            else if(turn == 1)
+                turnRight();
+            else if(turn == -1)
+                turnLeft();
+            else if(turn == 2)
+                uTurn(); 
+            digitalWrite(LED_BUILTIN, LOW);
+            previousTime= millis();
+        /*}
+        else
+            stop();*/
+        
+        
+    }
+    /*else if (leftSensor > LIGHT_THRESHOLD && outterLeftSensor > LIGHT_THRESHOLD)
         turnLeft();
     else if (outterRightSensor > LIGHT_THRESHOLD && rightSensor > LIGHT_THRESHOLD){
-        turnRight(); 
-    }
+        turnRight(); }*/
+    
           
 }
 
-void Drive::BasicLineFollowing(){
+/*void Drive::BasicLineFollowing(){
     if (rightSensor < LIGHT_THRESHOLD && leftSensor < LIGHT_THRESHOLD && middleSensor < LIGHT_THRESHOLD)    
         stop();
     else if (rightSensor > LIGHT_THRESHOLD && leftSensor > LIGHT_THRESHOLD && middleSensor > LIGHT_THRESHOLD)    
@@ -134,7 +201,7 @@ void Drive::BasicLineFollowing(){
     else if (leftSensor > LIGHT_THRESHOLD)
         turnSlightlyLeft();
     
-}
+}*/
 
 int Drive::controller(){
     uint16_t position = qtrCentral.readLineBlack(centralSensors);
@@ -168,4 +235,22 @@ int Drive::controller(){
         motorspeedLeft = 90;
     } 
 
+}
+
+void Drive::printNav(){
+    if(navigation.hasNextTurn())
+        Serial.println(navigation.nextTurn());
+}
+
+int Drive::nextTurn(){
+    int nextTurn = mazePath[numTurns];
+    numTurns++;
+    Serial.println(nextTurn);
+    currentDir += nextTurn;
+    if (currentDir < 0)
+        currentDir += 4;
+    if (currentDir > 3)
+        currentDir -= 4;
+
+    return nextTurn;
 }

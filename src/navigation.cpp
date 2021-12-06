@@ -2,9 +2,9 @@
 
 // Navigator
 
-Navigator::Navigator(int startDir) : path(startDir)
+Navigator::Navigator() : path(3)
 {
-    currentDir = startDir;
+    currentDir = 3;
 }
 
 int Navigator::nextTurn()
@@ -21,6 +21,7 @@ int Navigator::nextTurn()
 
     int nextTurn = path.getTurn(numTurns);
     numTurns++;
+    Serial.println(nextTurn);
     currentDir += nextTurn;
     if (currentDir < 0)
         currentDir += 4;

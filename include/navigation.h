@@ -1,6 +1,8 @@
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 
+#include <Arduino.h>
+
 #define NUM_NODES 17
 #define NUM_EXPLORE_PATH_TURNS 60
 #define MAX_NUM_TURNS NUM_EXPLORE_PATH_TURNS
@@ -8,7 +10,7 @@
 class Navigator
 {
 public:
-    Navigator(int startDir);
+    Navigator();
     void goHome();
     bool hasNextTurn();
     int nextTurn();
@@ -25,7 +27,12 @@ private:
 
     private:
         static constexpr int numExplorePathTurns = NUM_EXPLORE_PATH_TURNS;
-        
+        /*  1st number is the turn 2nd is the cell of the turn
+        *   0 -> Move forward
+        *   1 -> Turn right
+        *   -1 -> Turn left
+        *   2 -> 180 degrees turn 
+        */
         static constexpr int explorePathTurns[NUM_EXPLORE_PATH_TURNS][2] = {
             {3, 16},
             {1, -1},
