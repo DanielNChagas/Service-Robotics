@@ -21,7 +21,7 @@ int Navigator::nextTurn()
 
     int nextTurn = path.getTurn(numTurns);
     numTurns++;
-    Serial.println(nextTurn);
+    //Serial.println(nextTurn);
     currentDir += nextTurn;
     if (currentDir < 0)
         currentDir += 4;
@@ -44,20 +44,21 @@ bool Navigator::hasNextTurn()
 // Navigator::MazePath
 
 constexpr int Navigator::MazePath::numExplorePathTurns;
-constexpr int Navigator::MazePath::explorePathTurns[NUM_EXPLORE_PATH_TURNS][2];
+constexpr int Navigator::MazePath::explorePathTurns[NUM_EXPLORE_PATH_TURNS-1][2];
 constexpr int Navigator::MazePath::numHomePathTurns[NUM_NODES];
-constexpr int Navigator::MazePath::homePathTurns[NUM_NODES - 1][14][2];
+//constexpr int Navigator::MazePath::homePathTurns[NUM_NODES - 1][14][2];
 
 Navigator::MazePath::MazePath(int startDir)
 {
     numTurns = numExplorePathTurns;
+    Serial.print("heyhey");
     initPath(explorePathTurns, startDir);
 }
 
 Navigator::MazePath::MazePath(int startDir, int node)
 {
     numTurns = numHomePathTurns[node];
-    initPath(homePathTurns[node], startDir);
+    //initPath(homePathTurns[node], startDir);
 }
 
 void Navigator::MazePath::initPath(const int p[][2], int startDir)
@@ -65,11 +66,13 @@ void Navigator::MazePath::initPath(const int p[][2], int startDir)
     // The first turn is cardinal, convert to relative
     turns[0][0] = p[0][0] - startDir;
     turns[0][0] = (turns[0][0] == 3) ? -1 : turns[0][0];
-
+    //Serial.print(turns[0][0]);
+    Serial.println(numTurns);
     for (int t = 1; t < numTurns; t++)
     {
         turns[t][0] = p[t][0];
         turns[t][1] = p[t][1];
+        //Serial.print(turns[t][0]);
     }
 }
 
