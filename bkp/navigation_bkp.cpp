@@ -1,4 +1,6 @@
 #include "navigation.h"
+#include "iostream"
+using namespace std;
 
 // Navigator
 
@@ -14,13 +16,14 @@ int Navigator::nextTurn()
     currentNode = path.getNode(numTurns, -1);
     if (currentNode != prevNode && willGoHome)
     {
-        path = MazePath(currentDir, currentNode);
+        path = MazePath(currentDir, numTurns+1);
         numTurns = 0;
         willGoHome = false;
     }
 
     int nextTurn = path.getTurn(numTurns);
     numTurns++;
+    
     currentDir += nextTurn;
     if (currentDir < 0)
         currentDir += 4;
@@ -42,33 +45,37 @@ bool Navigator::hasNextTurn()
 
 // Navigator::MazePath
 
-constexpr uint8_t Navigator::MazePath::numExplorePathTurns;
-constexpr int8_t Navigator::MazePath::explorePathTurns[NUM_EXPLORE_PATH_TURNS][2];
-constexpr uint8_t Navigator::MazePath::numHomePathTurns[NUM_NODES];
-constexpr int8_t Navigator::MazePath::homePathTurns[NUM_NODES - 1][14][2];
+constexpr int Navigator::MazePath::numExplorePathTurns;
+constexpr int Navigator::MazePath::explorePathTurns[NUM_EXPLORE_PATH_TURNS][2];
+constexpr int Navigator::MazePath::numHomePathTurns;
+constexpr int Navigator::MazePath::homePathTurns[NUM_HOME_PATH_TURNS][2];
 
 Navigator::MazePath::MazePath(int startDir)
 {
-    numTurns = numExplorePathTurns;
-    initPath(explorePathTurns, startDir);
+    initPath(explorePathTurns, numExplorePathTurns, startDir, 0);
+}
+Navigator::MazePath::MazePath(int startDir, int startTurn)
+{
+    //initPath(homePathTurns, numHomePathTurns, startDir, startTurn);
+    initPath(explorePathTurns, numExplorePathTurns, startDir, startTurn);
 }
 
-Navigator::MazePath::MazePath(int startDir, int node)
+void Navigator::MazePath::initPath(const int p[][2], int numTurns, int startDir, int startTurn)
 {
-    numTurns = numHomePathTurns[node];
-    initPath(homePathTurns[node], startDir);
-}
-
-void Navigator::MazePath::initPath(const int8_t p[][2], int startDir)
-{
+    this->numTurns = numTurns - startTurn;
     // The first turn is cardinal, convert to relative
-    turns[0][0] = p[0][0] - startDir;
-    turns[0][0] = (turns[0][0] == 3) ? -1 : turns[0][0];
-
-    for (int t = 1; t < numTurns; t++)
+    if (startTurn == 0)
     {
-        turns[t][0] = p[t][0];
-        turns[t][1] = p[t][1];
+        turns[0][0] = p[startTurn][0] - startDir;
+        turns[0][0] = (turns[0][0] == 3) ? -1 : turns[0][0];
+        turns[0][1] = p[startTurn][1];
+        startTurn++;
+    }
+
+    for (int t = 0; t < this->numTurns; t++)
+    {
+        turns[t][0] = p[t + startTurn][0];
+        turns[t][1] = p[t + startTurn][1];
     }
 }
 
