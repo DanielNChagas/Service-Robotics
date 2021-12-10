@@ -122,7 +122,7 @@ void Drive::getLineSensorValue(){
     outterRightSensor = outterSensors[0];
     outterLeftSensor = outterSensors[1];
 
-    /*Serial.print("Outter Left:");
+    Serial.print("Outter Left:");
     Serial.print(outterLeftSensor);
     Serial.print("Left:");
     Serial.print(leftSensor);
@@ -131,7 +131,7 @@ void Drive::getLineSensorValue(){
     Serial.print("Right:");
     Serial.print(rightSensor);
     Serial.print("Outter Right:");
-    Serial.println(outterRightSensor);*/
+    Serial.println(outterRightSensor);
 
 }
 
@@ -161,7 +161,7 @@ bool Drive::missingLine(){
 void Drive::LineFollowing(){
     getLineSensorValue();
     bool noLine=missingLine();
-    uint64_t currentTime=millis();
+    //uint64_t currentTime=millis();
     float distance = getSonar();
     Serial.println(navigation.numTurns);
     //Dealing with cases where we have no Lines
@@ -178,12 +178,6 @@ void Drive::LineFollowing(){
                 right_wheel.write(180);
                 left_wheel.write(180);
             }
-            
-            /*while(distance < 60.00){
-                distance = getSonar();
-            }
-            while( distance > 44.00)
-                distance = getSonar();*/
                 delay(930);
             right_wheel.write(180);
             left_wheel.write(0);
@@ -199,7 +193,25 @@ void Drive::LineFollowing(){
 
     }
     else{   //Deals with cases where there is a line
-        if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) /*|| currentTime-previousTime < 2000*/)
+        if (distance < 7.0){
+            right_wheel.detach();
+            left_wheel.detach();
+            //lower claw
+
+            right_wheel.attach(9);
+            left_wheel.attach(10);
+            right_wheel.write(100);
+            left_wheel.write(80);
+            delay(500);
+            right_wheel.detach();
+            left_wheel.detach();
+            //grab and put it up
+            
+            right_wheel.attach(9);
+            left_wheel.attach(10);
+
+        }
+        else if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) /*|| currentTime-previousTime < 2000*/)
         {
 
             int speed = controller();
@@ -235,7 +247,7 @@ void Drive::LineFollowing(){
             if (navigation.hasNextTurn())
             {
                 digitalWrite(LED_BUILTIN, HIGH);
-                int turn = navigation.nextTurn();
+                int turn = navigation.nextTurn(savedPeople);
                 Serial.println(turn);
 
                 if (turn == 0)
