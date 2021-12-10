@@ -13,7 +13,7 @@ public:
     Navigator();
     void goHome();
     bool hasNextTurn();
-    int nextTurn();
+    int nextTurn(int);
     class MazePath
     {
     public:
@@ -22,6 +22,7 @@ public:
         bool hasTurn(int t);
         int getTurn(int t);
         int getNode(int t, int searchDirection);
+        static constexpr int homePath[2][2] = {{-1,14},{-1,-1}};
 
     private:
         static constexpr int numExplorePathTurns = NUM_EXPLORE_PATH_TURNS-1;
@@ -82,16 +83,16 @@ public:
             {0, 10},
             {2, 9},
             {1, 10},
-            {1, -1},
+            {1, -1},// from here check if goes home
             {0, 14},
             {1, 13},
-            {1, -1},
-            {2, 4},
-            {-1, -1},
+            {2, -1},
             {-1, 13},
             {1, 14},
-            {-1, -1},
+            {-1, -1}
         };
+
+        
 
         static constexpr int numHomePathTurns[NUM_NODES] = {7, 13, 14, 6, 5, 10, 10, 9, 8, 5, 4, 5, 6, 3, 2, 5};
         /*static constexpr int homePathTurns[NUM_NODES - 1][14][2] = {
@@ -122,6 +123,7 @@ public:
     
     int currentDir;
     int numTurns = 0;
+    int turnsHome = 0;
     bool willGoHome = false;
     MazePath path;
 

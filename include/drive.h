@@ -42,6 +42,7 @@ public:
     uint16_t leftSensor=2500;
     uint16_t middleSensor=2500;
     Navigator navigation;
+    int savedPeople=0;
     /*void goHome();
     bool hasNextTurn();
     int nextTurn();
