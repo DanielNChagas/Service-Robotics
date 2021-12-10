@@ -5,14 +5,14 @@ using namespace std;
 int main()
 {
 
-    Navigator navigator(3);
+    Navigator navigator;
 
     int i = 0;
 
     cout << "Exploring\n";
     while (navigator.hasNextTurn())
     {
-        if (i == 4) // Arbitrary, this is where we find the last person
+        if (i == 20) // Arbitrary, this is where we find the last person
         {
             cout << "Going home\n";
             navigator.goHome();
