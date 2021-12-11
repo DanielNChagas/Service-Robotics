@@ -13,9 +13,9 @@ void Drive::init() {
     left_wheel.write(90);
 
     qtrCentral.setTypeRC();
-    qtrCentral.setSensorPins((const uint8_t[]){2, 4, 5}, 3);
+    qtrCentral.setSensorPins((const uint8_t[]){12, 2, 4}, 3);
     qtrOutter.setTypeRC();
-    qtrOutter.setSensorPins((const uint8_t[]){6, 7}, 2);
+    qtrOutter.setSensorPins((const uint8_t[]){7, 8}, 2);
     
 }
 
@@ -136,14 +136,14 @@ void Drive::getLineSensorValue(){
 }
 
 float Drive::getSonar(){
-  digitalWrite(3, LOW);
+  digitalWrite(11, LOW);
   delayMicroseconds(2);
   // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(3, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(3, LOW);
+  digitalWrite(11, HIGH);
+  delayMicroseconds(6);
+  digitalWrite(11, LOW);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  float duration = pulseIn(11, HIGH);
+  float duration = pulseIn(10, HIGH);
   // Calculating the distance
   float distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
   // Displays the distance on the Serial Monitor
@@ -192,14 +192,14 @@ void Drive::LineFollowing(){
     else if(navigation.numTurns == 16 && noLine){
 
     }
-    else{   //Deals with cases where there is a line
-        if (distance < 7.0){
+    else {   //Deals with cases where there is a line
+        /*if (distance < 15.0){
             right_wheel.detach();
             left_wheel.detach();
             //lower claw
-
-            right_wheel.attach(9);
-            left_wheel.attach(10);
+            delay(2000);
+            right_wheel.attach(8);
+            left_wheel.attach(9);
             right_wheel.write(100);
             left_wheel.write(80);
             delay(500);
@@ -207,11 +207,13 @@ void Drive::LineFollowing(){
             left_wheel.detach();
             //grab and put it up
             
-            right_wheel.attach(9);
-            left_wheel.attach(10);
-
+            right_wheel.attach(8);
+            left_wheel.attach(9);
+            savedPeople++;
+            if(savedPeople == 3)
+                navigation.goHome();
         }
-        else if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) /*|| currentTime-previousTime < 2000*/)
+        else*/ if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) /*|| currentTime-previousTime < 2000*/)
         {
 
             int speed = controller();
@@ -263,8 +265,10 @@ void Drive::LineFollowing(){
                 digitalWrite(LED_BUILTIN, LOW);
                 previousTime = millis();
             }
-            else
-                stop();
+            else{
+
+            }
+                
         }
     }
     /*else if (leftSensor > LIGHT_THRESHOLD && outterLeftSensor > LIGHT_THRESHOLD)

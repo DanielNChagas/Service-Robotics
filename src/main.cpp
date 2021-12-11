@@ -10,13 +10,13 @@ using namespace std;
 Drive drive;  //iitializes the class responsible for driving the robot
 
 int i=0;
-Ultrasonic ultrasonic(3, 1);
+
  
 void setup() {
   drive.init();
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(3, OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(11, INPUT); // Sets the echoPin as an INPUT
+  pinMode(11, OUTPUT); // Sets the trigPin as an OUTPUT
+  pinMode(6, INPUT); // Sets the echoPin as an INPUT
   Serial.begin(9600);
 }
 
@@ -64,12 +64,4 @@ void loop() {
     right_wheel.write(90);
     left_wheel.write(180);*/
   
-}
-
-long microsecondsToInches(long microseconds) {
-   return microseconds / 74 / 2;
-}
-
-long microsecondsToCentimeters(long microseconds) {
-   return microseconds / 29 / 2;
 }
