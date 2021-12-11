@@ -13,9 +13,9 @@ void Drive::init() {
     left_wheel.write(90);
 
     qtrCentral.setTypeRC();
-    qtrCentral.setSensorPins((const uint8_t[]){2, 4, 5}, 3);
+    qtrCentral.setSensorPins((const uint8_t[]){12, 2, 4}, 3);
     qtrOutter.setTypeRC();
-    qtrOutter.setSensorPins((const uint8_t[]){6, 7}, 2);
+    qtrOutter.setSensorPins((const uint8_t[]){7, 8}, 2);
     
 }
 
@@ -122,7 +122,7 @@ void Drive::getLineSensorValue(){
     outterRightSensor = outterSensors[0];
     outterLeftSensor = outterSensors[1];
 
-    /*Serial.print("Outter Left:");
+    Serial.print("Outter Left:");
     Serial.print(outterLeftSensor);
     Serial.print("Left:");
     Serial.print(leftSensor);
@@ -131,19 +131,19 @@ void Drive::getLineSensorValue(){
     Serial.print("Right:");
     Serial.print(rightSensor);
     Serial.print("Outter Right:");
-    Serial.println(outterRightSensor);*/
+    Serial.println(outterRightSensor);
 
 }
 
 float Drive::getSonar(){
-  digitalWrite(3, LOW);
+  digitalWrite(11, LOW);
   delayMicroseconds(2);
   // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(3, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(3, LOW);
+  digitalWrite(11, HIGH);
+  delayMicroseconds(6);
+  digitalWrite(11, LOW);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  float duration = pulseIn(11, HIGH);
+  float duration = pulseIn(10, HIGH);
   // Calculating the distance
   float distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
   // Displays the distance on the Serial Monitor
@@ -161,7 +161,7 @@ bool Drive::missingLine(){
 void Drive::LineFollowing(){
     getLineSensorValue();
     bool noLine=missingLine();
-    uint64_t currentTime=millis();
+    //uint64_t currentTime=millis();
     float distance = getSonar();
     Serial.println(navigation.numTurns);
     //Dealing with cases where we have no Lines
@@ -178,12 +178,6 @@ void Drive::LineFollowing(){
                 right_wheel.write(180);
                 left_wheel.write(180);
             }
-            
-            /*while(distance < 60.00){
-                distance = getSonar();
-            }
-            while( distance > 44.00)
-                distance = getSonar();*/
                 delay(930);
             right_wheel.write(180);
             left_wheel.write(0);
@@ -198,8 +192,28 @@ void Drive::LineFollowing(){
     else if(navigation.numTurns == 16 && noLine){
 
     }
-    else{   //Deals with cases where there is a line
-        if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) /*|| currentTime-previousTime < 2000*/)
+    else {   //Deals with cases where there is a line
+        /*if (distance < 15.0){
+            right_wheel.detach();
+            left_wheel.detach();
+            //lower claw
+            delay(2000);
+            right_wheel.attach(8);
+            left_wheel.attach(9);
+            right_wheel.write(100);
+            left_wheel.write(80);
+            delay(500);
+            right_wheel.detach();
+            left_wheel.detach();
+            //grab and put it up
+            
+            right_wheel.attach(8);
+            left_wheel.attach(9);
+            savedPeople++;
+            if(savedPeople == 3)
+                navigation.goHome();
+        }
+        else*/ if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) /*|| currentTime-previousTime < 2000*/)
         {
 
             int speed = controller();
@@ -235,7 +249,7 @@ void Drive::LineFollowing(){
             if (navigation.hasNextTurn())
             {
                 digitalWrite(LED_BUILTIN, HIGH);
-                int turn = navigation.nextTurn();
+                int turn = navigation.nextTurn(savedPeople);
                 Serial.println(turn);
 
                 if (turn == 0)
@@ -251,8 +265,10 @@ void Drive::LineFollowing(){
                 digitalWrite(LED_BUILTIN, LOW);
                 previousTime = millis();
             }
-            else
-                stop();
+            else{
+
+            }
+                
         }
     }
     /*else if (leftSensor > LIGHT_THRESHOLD && outterLeftSensor > LIGHT_THRESHOLD)

@@ -7,7 +7,7 @@ Navigator::Navigator() : path(3)
     currentDir = 3;
 }
 
-int Navigator::nextTurn()
+int Navigator::nextTurn(int savedPeople)
 {
 
     int prevNode = currentNode;
@@ -18,8 +18,13 @@ int Navigator::nextTurn()
         numTurns = 0;
         willGoHome = false;
     }
+    
 
     int nextTurn = path.getTurn(numTurns);
+    if(savedPeople == 3){
+        nextTurn = path.homePath[turnsHome][0];
+        turnsHome++;
+    }
     numTurns++;
     currentDir += nextTurn;
     if (currentDir < 0)
@@ -41,9 +46,9 @@ bool Navigator::hasNextTurn()
 }
 
 // Navigator::MazePath
-
+constexpr int Navigator::MazePath::homePath[2][2];
 constexpr uint8_t Navigator::MazePath::numExplorePathTurns;
-constexpr int8_t Navigator::MazePath::explorePathTurns[NUM_EXPLORE_PATH_TURNS][2];
+constexpr int8_t Navigator::MazePath::explorePathTurns[NUM_EXPLORE_PATH_TURNS-1][2];
 constexpr uint8_t Navigator::MazePath::numHomePathTurns[NUM_NODES];
 constexpr int8_t Navigator::MazePath::homePathTurns[NUM_NODES - 1][14][2];
 
