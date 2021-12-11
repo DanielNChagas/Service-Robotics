@@ -3,7 +3,7 @@
 void Limbs::init()
 {
     axle.attach(AXLE_PIN);
-    axle.write(AXLE_HALF_UP_POS);
+    axle.write(AXLE_UP_POS);
 
     claw.attach(CLAW_PIN);
     claw.write(CLAW_HALF_CLOSED_POS);

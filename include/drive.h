@@ -5,11 +5,12 @@
 #include <Servo.h>
 #include <QTRSensors.h>
 #include "navigation.h"
+#include "limbs.h"
 
 #define MAX_SPEED 180
 #define STOP 90
 #define SENSOR_COUNT 5
-#define LIGHT_THRESHOLD 750
+#define LIGHT_THRESHOLD 550
 
 #define NUM_NODES 17
 #define NUM_EXPLORE_PATH_TURNS 60
@@ -24,12 +25,14 @@ private:
     QTRSensors qtrCentral;
     QTRSensors qtrOutter;
 
+    Limbs limbs;
+
     uint16_t outterSensors[2];
     uint16_t centralSensors[3];
 
     float Kp = 0.035; 
-    float Ki = 0.0005;
-    float Kd = 0.03;
+    float Ki = 0.00025;
+    float Kd = 0.02;
 
     
 

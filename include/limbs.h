@@ -4,8 +4,8 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#define AXLE_PIN 9
-#define CLAW_PIN 11
+#define AXLE_PIN 3
+#define CLAW_PIN 5
 #define AXLE_DOWN_POS 45
 #define AXLE_UP_POS 135
 #define AXLE_HALF_UP_POS 115
