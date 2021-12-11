@@ -21,47 +21,11 @@ void setup() {
 }
 
 void loop() {
-   /*Serial.println("--------------------------");
-    Serial.print("Outter Left:");
-    Serial.print(drive.outterLeftSensor);
-    Serial.print("Left:");
-    Serial.print(drive.leftSensor);
-    Serial.print("Middle:");
-    Serial.print(drive.middleSensor);
-    Serial.print("Right:");
-    Serial.print(drive.rightSensor);
-    Serial.print("Outter Right:");
-    Serial.println(drive.outterRightSensor);*/
-    drive.LineFollowing();
-    // Clears the trigPin condition
-  //Le as informacoes do sensor, em cm e pol
-  // Clears the trigPin condition
-  
 
-  //Move forward
-   //drive.LineFollowing(navigation);
-   
-   
-    
-  //Brake
-  /*if (i==3)
-  {
-    drive.turnRight();
-  }
-  if(i==5){
-    drive.init();
-  }*/
+    drive.LineFollowing();
+ 
+
   
-    
-   /* 
-    //right_wheel.detatch(9);
-    //left_wheel.detatch(10);
-    
-  //Turn left
-    right_wheel.write(180);
-    left_wheel.write(90);
-  //Turn right
-    right_wheel.write(90);
-    left_wheel.write(180);*/
+   
   
 }

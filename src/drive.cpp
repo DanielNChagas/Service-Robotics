@@ -33,9 +33,9 @@ void Drive::turnRight(){
 
     while(outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
         getLineSensorValue();
-    delay(100);
-    right_wheel.write(0);
-    left_wheel.write(0);
+    //delay(100);
+    right_wheel.write(75);
+    left_wheel.write(75);
     I=0;
     getLineSensorValue();
     if(middleSensor>LIGHT_THRESHOLD){
@@ -46,8 +46,9 @@ void Drive::turnRight(){
             getLineSensorValue();
     }
     else{
-         while(leftSensor < LIGHT_THRESHOLD)
+         while(middleSensor < LIGHT_THRESHOLD)
             getLineSensorValue();
+        
     }
     /*while((outterRightSensor > LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD || leftSensor < LIGHT_THRESHOLD) && middleSensor>LIGHT_THRESHOLD && rightSensor < LIGHT_THRESHOLD){
         getLineSensorValue();
@@ -60,9 +61,9 @@ void Drive::turnRight(){
 void Drive::turnLeft(){
     while(outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
         getLineSensorValue();
-    delay(100);
-    right_wheel.write(180);
-    left_wheel.write(180);
+    //delay(100);
+    right_wheel.write(105);
+    left_wheel.write(105);
     I=0;
 
     getLineSensorValue();
@@ -74,7 +75,7 @@ void Drive::turnLeft(){
             getLineSensorValue();
     }
     else{
-        while(rightSensor < LIGHT_THRESHOLD )
+        while(middleSensor < LIGHT_THRESHOLD )
             getLineSensorValue();
     }
     
@@ -218,8 +219,8 @@ void Drive::LineFollowing(){
 
             int speed = controller();
 
-            int motorspeedRight = 120 - speed;
-            int motorspeedLeft = 60 - speed;
+            int motorspeedRight = 135 - speed;
+            int motorspeedLeft = 45 - speed;
 
             if (motorspeedRight > MAX_SPEED)
             {
