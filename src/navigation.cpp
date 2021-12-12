@@ -1,10 +1,13 @@
 #include "navigation.h"
-#include "iostream"
-using namespace std;
 
 // Navigator
 
 Navigator::Navigator() : path(PATH_FIRST_PERSON, 3, 16)
+{
+    currentDir = 3;
+}
+
+Navigator::Navigator(int path) : path(path, 3, 16)
 {
     currentDir = 3;
 }

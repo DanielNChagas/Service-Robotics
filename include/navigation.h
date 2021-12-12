@@ -16,6 +16,7 @@ class Navigator
 {
 public:
     Navigator();
+    Navigator(int path);
 
     void setPath(int path);
     bool hasNextTurn();

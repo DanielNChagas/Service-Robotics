@@ -5,7 +5,7 @@ using namespace std;
 int main()
 {
 
-    Navigator navigator;
+    Navigator navigator(PATH_FIRST_PERSON);
     //navigator.setPath(PATH_FIRST_PERSON);
     cout<<"PATH_FIRST_PERSON\n";
 
