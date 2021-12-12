@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 
+
 class Navigator
 {
 public:
