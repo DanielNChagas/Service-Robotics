@@ -2,8 +2,13 @@
 #define NAVIGATION_H
 
 #define NUM_NODES 17
-#define NUM_EXPLORE_PATH_TURNS 60
+#define NUM_FIRST_PERSON_PATH_TURNS 9
+#define NUM_EXPLORE_PATH_TURNS 54
 #define MAX_NUM_TURNS NUM_EXPLORE_PATH_TURNS
+
+#define PATH_FIRST_PERSON 0
+#define PATH_EXPLORE 1
+#define PATH_HOME 2
 
 #include <stdint.h>
 
@@ -11,31 +16,41 @@ class Navigator
 {
 public:
     Navigator();
-    void goHome();
+    Navigator(int path);
+
+    void setPath(int path);
     bool hasNextTurn();
-    int nextTurn(int);
+    int nextTurn();
     class MazePath
     {
     public:
         MazePath(int startDir);
-        MazePath(int startDir, int node);
+        MazePath(int path, int startDir, int node);
         bool hasTurn(int t);
         int getTurn(int t);
         int getNode(int t, int searchDirection);
         static constexpr int homePath[2][2] = {{-1,14},{-1,-1}};
 
     private:
-        static constexpr uint8_t numExplorePathTurns = NUM_EXPLORE_PATH_TURNS;
-        
-
-        static constexpr int8_t explorePathTurns[NUM_EXPLORE_PATH_TURNS-1][2] = {
-            {4, -1}, //4,-1
+        static constexpr uint8_t numFirstPersonPathTurns = NUM_FIRST_PERSON_PATH_TURNS;
+        static constexpr int8_t firstPersonPathTurns[NUM_FIRST_PERSON_PATH_TURNS][2] = {
+            {4, -1},
             {-1, 14},
             {-1, 13},
             {1, -1},
             {2, 15},
             {-1, -1},
-            {-1, 13},
+            {1, 13},
+            {1, 14},
+            {-1, -1},
+        };
+
+        static constexpr uint8_t numExplorePathTurns = NUM_EXPLORE_PATH_TURNS;
+        static constexpr int8_t explorePathTurns[NUM_EXPLORE_PATH_TURNS][2] = {
+            {3, 16},
+            {1, -1},
+            {-1, 14},
+            {0, 13},
             {1, -1},
             {1, -1},
             {1, -1},
@@ -79,7 +94,7 @@ public:
             {0, 10},
             {2, 9},
             {1, 10},
-            {1, -1},// from here check if goes home
+            {1, -1},
             {0, 14},
             {1, 13},
             {2, -1},
@@ -118,7 +133,8 @@ public:
     int currentDir;
     int numTurns = 0;
     int turnsHome = 0;
-    bool willGoHome = false;
+    bool isPathQueued = false;
+    int queuedPath = 0;
     MazePath path;
 };
 
