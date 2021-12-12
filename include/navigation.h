@@ -27,6 +27,7 @@ public:
     private:
         static constexpr uint8_t numExplorePathTurns = NUM_EXPLORE_PATH_TURNS;
         
+        
         static constexpr int8_t explorePathTurns[NUM_EXPLORE_PATH_TURNS-1][2] = {
             {4, -1},
             {-1, 14},

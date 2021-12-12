@@ -52,6 +52,7 @@ constexpr int8_t Navigator::MazePath::explorePathTurns[NUM_EXPLORE_PATH_TURNS-1]
 constexpr uint8_t Navigator::MazePath::numHomePathTurns[NUM_NODES];
 constexpr int8_t Navigator::MazePath::homePathTurns[NUM_NODES - 1][14][2];
 
+
 Navigator::MazePath::MazePath(int startDir)
 {
     numTurns = numExplorePathTurns;
