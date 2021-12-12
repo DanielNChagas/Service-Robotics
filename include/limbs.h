@@ -10,7 +10,7 @@
 #define AXLE_UP_POS 135
 #define AXLE_HALF_UP_POS 115
 #define CLAW_OPEN_POS 0
-#define CLAW_CLOSED_POS 55
+#define CLAW_CLOSED_POS 60
 #define CLAW_HALF_CLOSED_POS 45
 
 class Limbs
