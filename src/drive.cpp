@@ -34,16 +34,16 @@ void Drive::turnRight(){
 
     while(outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
         getLineSensorValue();
-    //delay(50);
+    delay(100);
     right_wheel.write(45);
     left_wheel.write(45);
-    I=0;
+    //I=0;
     getLineSensorValue();
     if(rightSensor > LIGHT_THRESHOLD || middleSensor > LIGHT_THRESHOLD  || leftSensor > LIGHT_THRESHOLD ){
-        delay(500);
+        delay(700);
         /*while( leftSensor > LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD)
             getLineSensorValue();*/
-        while(outterLeftSensor > LIGHT_THRESHOLD)
+        while(leftSensor < LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
             getLineSensorValue();
     }
     else{
@@ -61,17 +61,17 @@ void Drive::turnRight(){
 void Drive::turnLeft(){
     while(outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
         getLineSensorValue();
-    //delay(50);
+    delay(100);
     right_wheel.write(135);
     left_wheel.write(135);
-    I=0;
+    //I=0;
 
     getLineSensorValue();
     if(rightSensor > LIGHT_THRESHOLD || middleSensor > LIGHT_THRESHOLD  || leftSensor > LIGHT_THRESHOLD ){
-        delay(500);
+        delay(700);
         /*while(rightSensor < LIGHT_THRESHOLD ||outterRightSensor < LIGHT_THRESHOLD)
             getLineSensorValue();*/
-        while(outterRightSensor > LIGHT_THRESHOLD)
+        while(rightSensor < LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
             getLineSensorValue();
     }
     else{
@@ -167,16 +167,35 @@ void Drive::LineFollowing(){
     
     //Serial.println(navigation.numTurns);
     //Dealing with cases where we have no Lines
-    if((navigation.numTurns == 9 || navigation.numTurns == 32 || navigation.numTurns == 16) && noLine && !(navigation.willGoHome)){
+    if((navigation.numTurns == 9 || navigation.numTurns == 32 || navigation.numTurns == 16) && noLine /*&& !(navigation.willGoHome)*/){
+            right_wheel.write(135);
+            left_wheel.write(45);
         if (navigation.numTurns == 9){
-            right_wheel.write(95);
+            /*right_wheel.write(135);
+            left_wheel.write(45);*/
+            delay(1400);
+            right_wheel.write(45);
+            left_wheel.write(45);
+            delay(900);
+            right_wheel.write(135);
             left_wheel.write(45);
         }
-        else{
+        else if(navigation.numTurns== 16){
+            delay(1400);
             right_wheel.write(135);
-            left_wheel.write(85);
+            left_wheel.write(135);
+            delay(900);
+            right_wheel.write(135);
+            left_wheel.write(45);
         }
-       
+        else {
+            delay(1100);
+            right_wheel.write(135);
+            left_wheel.write(135);
+            delay(700);
+            right_wheel.write(135);
+            left_wheel.write(45);
+        }
         /*if(distance <= 10.00){
             if (navigation.numTurns == 1)
             {
@@ -197,9 +216,31 @@ void Drive::LineFollowing(){
             }
             navigation.numTurns++;
         }*/
+        
         while(rightSensor < LIGHT_THRESHOLD && middleSensor < LIGHT_THRESHOLD  && leftSensor < LIGHT_THRESHOLD )
-        getLineSensorValue();
+            getLineSensorValue();
         navigation.numTurns++;
+        
+        if ( outterRightSensor > LIGHT_THRESHOLD)
+        {
+            right_wheel.write(45);
+            left_wheel.write(45);
+            while ( outterRightSensor > LIGHT_THRESHOLD)
+            {
+                getLineSensorValue();
+            }  
+        }
+        else if ( outterLeftSensor > LIGHT_THRESHOLD)
+        {
+            right_wheel.write(135);
+            left_wheel.write(135);
+            while (outterLeftSensor > LIGHT_THRESHOLD)
+            {
+                getLineSensorValue();
+            }
+            
+        } 
+        
     }
     else if(navigation.numTurns == 16 && noLine){
 
@@ -229,16 +270,19 @@ void Drive::LineFollowing(){
                 left_wheel.detach();
                 //grab and put it up
                 limbs.grab();
-                delay(500);
+                delay(800);
                 savedPeople++;
                 
                 if(savedPeople == 3){
                     limbs.smallLift();
+                    delay(1000);
                     navigation.goHome();
                 }      
                 else{
                     limbs.lift();
+                    delay(1000);
                     limbs.drop();
+                    delay(200);
                 }
                 right_wheel.attach(9);
                 left_wheel.attach(10);

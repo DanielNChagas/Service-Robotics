@@ -31,7 +31,7 @@ private:
     uint16_t centralSensors[3];
 
     float Kp = 0.035; 
-    float Ki = 0.00025;
+    float Ki = 0.0001;
     float Kd = 0.02;
 
     
