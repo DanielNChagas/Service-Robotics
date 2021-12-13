@@ -10,17 +10,17 @@
 #define AXLE_UP_POS 135
 #define AXLE_HALF_UP_POS 115
 #define CLAW_OPEN_POS 0
-#define CLAW_CLOSED_POS 60
+#define CLAW_CLOSED_POS 80
 #define CLAW_HALF_CLOSED_POS 45
 
 class Limbs
 {
 private:
     Servo axle;
-    Servo claw;
+    
 public:
     void init();
-
+Servo claw;
     void storePerson();
     void storeThirdPerson();
 

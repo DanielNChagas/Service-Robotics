@@ -48,7 +48,7 @@ void Limbs::smallLift()
 
 void Limbs::drop()
 {
-    claw.write(CLAW_OPEN_POS);
+    claw.write(CLAW_HALF_CLOSED_POS);
 }
 
 void Limbs::down()

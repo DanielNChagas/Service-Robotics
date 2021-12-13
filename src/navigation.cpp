@@ -25,6 +25,7 @@ int Navigator::nextTurn()
     if ((currentNode != prevNode || !path.hasTurn(numTurns)) && isPathQueued)
     {
         path = MazePath(queuedPath, currentDir, currentNode);
+        currentPathName = queuedPath;
         numTurns = 0;
         isPathQueued = false;
     }

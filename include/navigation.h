@@ -56,7 +56,7 @@ public:
             {1, -1},
             {-1, -1},
             {-1, 3},
-            {2, 1},
+            {2, 0},
             {0, 3},
             {0, 4},
             {-1, -1},
@@ -136,6 +136,7 @@ public:
     bool isPathQueued = false;
     int queuedPath = 0;
     MazePath path;
+    int currentPathName;
 };
 
 #endif

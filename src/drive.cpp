@@ -5,18 +5,39 @@
 }*/
 
 void Drive::init() {
-    right_wheel.attach(9);
-    left_wheel.attach(10);
-
-
-    right_wheel.write(90);
-    left_wheel.write(90);
+    
+    
     limbs.init();
 
     qtrCentral.setTypeRC();
     qtrCentral.setSensorPins((const uint8_t[]){12, 2, 4}, 3);
     qtrOutter.setTypeRC();
     qtrOutter.setSensorPins((const uint8_t[]){7, 8}, 2);
+
+    for(int i=0; i<150; i++){
+        qtrCentral.calibrate();
+        qtrOutter.calibrate();
+    }
+    for(int i=0; i < 3;i++){
+        Serial.print(qtrCentral.calibrationOn.maximum[i]);
+        Serial.print(" ");
+    }
+    Serial.print(qtrOutter.calibrationOn.maximum[0]);
+    Serial.print(" ");
+    Serial.print(qtrOutter.calibrationOn.maximum[1]);
+        
+    for(int i=0; i < 3;i++){
+        Serial.print(qtrCentral.calibrationOn.minimum[i]);
+        Serial.print(" ");
+    }
+    Serial.print(qtrOutter.calibrationOn.minimum[0]);
+    Serial.print(" ");
+    Serial.print(qtrOutter.calibrationOn.minimum[1]);
+    right_wheel.attach(9);
+    left_wheel.attach(10);
+
+    right_wheel.write(90);
+    left_wheel.write(90);
     
 }
 
@@ -34,20 +55,20 @@ void Drive::turnRight(){
 
     while(outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
         getLineSensorValue();
-    delay(100);
-    right_wheel.write(45);
-    left_wheel.write(45);
+    //delay(50);
+    right_wheel.write(70);
+    left_wheel.write(70);
     //I=0;
     getLineSensorValue();
     if(rightSensor > LIGHT_THRESHOLD || middleSensor > LIGHT_THRESHOLD  || leftSensor > LIGHT_THRESHOLD ){
-        delay(700);
+        delay(900);
         /*while( leftSensor > LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD)
             getLineSensorValue();*/
         while(leftSensor < LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
             getLineSensorValue();
     }
     else{
-         while(leftSensor < LIGHT_THRESHOLD)
+         while(middleSensor < LIGHT_THRESHOLD)
             getLineSensorValue();
     }
     /*while((outterRightSensor > LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD || leftSensor < LIGHT_THRESHOLD) && middleSensor>LIGHT_THRESHOLD && rightSensor < LIGHT_THRESHOLD){
@@ -61,21 +82,21 @@ void Drive::turnRight(){
 void Drive::turnLeft(){
     while(outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
         getLineSensorValue();
-    delay(100);
-    right_wheel.write(135);
-    left_wheel.write(135);
+    //delay(50);
+    right_wheel.write(110);
+    left_wheel.write(110);
     //I=0;
 
     getLineSensorValue();
     if(rightSensor > LIGHT_THRESHOLD || middleSensor > LIGHT_THRESHOLD  || leftSensor > LIGHT_THRESHOLD ){
-        delay(700);
+        delay(800);
         /*while(rightSensor < LIGHT_THRESHOLD ||outterRightSensor < LIGHT_THRESHOLD)
             getLineSensorValue();*/
         while(rightSensor < LIGHT_THRESHOLD || outterLeftSensor > LIGHT_THRESHOLD || outterRightSensor > LIGHT_THRESHOLD)
             getLineSensorValue();
     }
     else{
-        while(rightSensor < LIGHT_THRESHOLD )
+        while(middleSensor < LIGHT_THRESHOLD )
             getLineSensorValue();
     }
     
@@ -92,7 +113,7 @@ void Drive::uTurn(){
     left_wheel.write(180);
     I=0;
     delay(1100);
-    while(leftSensor < LIGHT_THRESHOLD)
+    while(middleSensor < LIGHT_THRESHOLD)
         getLineSensorValue();
 }
 
@@ -109,13 +130,6 @@ void Drive::turnSlightlyLeft(){
 void Drive::getLineSensorValue(){
     qtrCentral.read(centralSensors);
     qtrOutter.read(outterSensors);
-    /*Serial.print(centralSensors[0]);
-    Serial.print(centralSensors[1]);
-    Serial.print(centralSensors[2]);
-    Serial.print("sensors:");
-    Serial.print(centralSensors[0]);
-    Serial.print(centralSensors[1]);
-    Serial.println(centralSensors[2]);*/
     
     rightSensor = centralSensors[0];
     middleSensor = centralSensors[1];
@@ -123,7 +137,7 @@ void Drive::getLineSensorValue(){
     outterRightSensor = outterSensors[0];
     outterLeftSensor = outterSensors[1];
 
-    /*Serial.print("Outter Left:");
+    Serial.print("Outter Left:");
     Serial.print(outterLeftSensor);
     Serial.print("Left:");
     Serial.print(leftSensor);
@@ -132,7 +146,7 @@ void Drive::getLineSensorValue(){
     Serial.print("Right:");
     Serial.print(rightSensor);
     Serial.print("Outter Right:");
-    Serial.println(outterRightSensor);*/
+    Serial.println(outterRightSensor);
 
 }
 
@@ -163,14 +177,22 @@ void Drive::LineFollowing(){
     float distance = getSonar();
     getLineSensorValue();
     bool noLine=missingLine();
-    //uint64_t currentTime=millis();
+    uint64_t currentTime=millis();
+    if( savedPeople == 3 && (navigation.numTurns <= 11 || navigation.numTurns >= 29) && navigation.currentPathName == PATH_EXPLORE)
+       navigation.setPath(PATH_HOME);
+                
+    if (millis() - previousPersonDropTime > 5000 && willShakePerson)
+    {
+        limbs.smallLift();
+        willShakePerson = false;
+    }
     
     //Serial.println(navigation.numTurns);
     //Dealing with cases where we have no Lines
-    if((navigation.numTurns == 9 || navigation.numTurns == 32 || navigation.numTurns == 16) && noLine /*&& !(navigation.willGoHome)*/){
+    if((navigation.numTurns == 6 || navigation.numTurns == 29 || navigation.numTurns == 13) && noLine  /*&& !(navigation.willGoHome)*/){
             right_wheel.write(135);
             left_wheel.write(45);
-        if (navigation.numTurns == 9){
+        if (navigation.numTurns == 6){
             /*right_wheel.write(135);
             left_wheel.write(45);*/
             delay(1400);
@@ -180,7 +202,7 @@ void Drive::LineFollowing(){
             right_wheel.write(135);
             left_wheel.write(45);
         }
-        else if(navigation.numTurns== 16){
+        else if(navigation.numTurns== 13){
             delay(1400);
             right_wheel.write(135);
             left_wheel.write(135);
@@ -192,7 +214,7 @@ void Drive::LineFollowing(){
             delay(1100);
             right_wheel.write(135);
             left_wheel.write(135);
-            delay(700);
+            delay(740);
             right_wheel.write(135);
             left_wheel.write(45);
         }
@@ -216,12 +238,14 @@ void Drive::LineFollowing(){
             }
             navigation.numTurns++;
         }*/
-        
+        //previousTime = millis()+800;
         while(rightSensor < LIGHT_THRESHOLD && middleSensor < LIGHT_THRESHOLD  && leftSensor < LIGHT_THRESHOLD )
             getLineSensorValue();
+        stop();
+        delay(100);
         navigation.numTurns++;
         
-        if ( outterRightSensor > LIGHT_THRESHOLD)
+       /* if ( outterRightSensor > LIGHT_THRESHOLD)
         {
             right_wheel.write(45);
             left_wheel.write(45);
@@ -239,17 +263,14 @@ void Drive::LineFollowing(){
                 getLineSensorValue();
             }
             
-        } 
+        } */
         
-    }
-    else if(navigation.numTurns == 16 && noLine){
-
     }
     else {   //Deals with cases where there is a line
         /*
-        else*/ if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) /*|| currentTime-previousTime < 2000*/)
+        else*/ if ((outterRightSensor < LIGHT_THRESHOLD && outterLeftSensor < LIGHT_THRESHOLD && !(noLine)) || currentTime-previousTime < 1800)
         {
-            if (distance < 7.0){
+            if (distance < 8.0){
                 Serial.println("yoyo");
                 right_wheel.write(45);
                 left_wheel.write(135);
@@ -272,18 +293,15 @@ void Drive::LineFollowing(){
                 limbs.grab();
                 delay(800);
                 savedPeople++;
-                
-                if(savedPeople == 3){
-                    limbs.smallLift();
-                    delay(1000);
-                    navigation.goHome();
-                }      
-                else{
-                    limbs.lift();
-                    delay(1000);
-                    limbs.drop();
-                    delay(200);
-                }
+                limbs.lift();
+                delay(1000);
+
+
+                limbs.drop();
+                delay(200);
+                previousPersonDropTime = millis();
+                willShakePerson = true;
+
                 right_wheel.attach(9);
                 left_wheel.attach(10);
 
@@ -291,8 +309,8 @@ void Drive::LineFollowing(){
 
             int speed = controller();
 
-            int motorspeedRight = 135 - speed;
-            int motorspeedLeft = 45 - speed;
+            int motorspeedRight = 130 - speed;
+            int motorspeedLeft = 50 - speed;
 
             if (motorspeedRight > MAX_SPEED)
             {
@@ -318,13 +336,26 @@ void Drive::LineFollowing(){
         }
         // BasicLineFollowing();
         // In case the robot finds an intersection, a 90 degree turn or a dead end
-        else if (((leftSensor > LIGHT_THRESHOLD && outterLeftSensor > LIGHT_THRESHOLD) || (outterRightSensor > LIGHT_THRESHOLD && rightSensor > LIGHT_THRESHOLD) || noLine) /* && currentTime-previousTime > 2000*/)
+        else if (((leftSensor > LIGHT_THRESHOLD && outterLeftSensor > LIGHT_THRESHOLD) || (outterRightSensor > LIGHT_THRESHOLD && rightSensor > LIGHT_THRESHOLD) || noLine)  && currentTime-previousTime >= 1800)
         {
-            // Serial.print(turn);
+            if ( !(navigation.hasNextTurn()) ){
+                navigation.setPath(PATH_EXPLORE);
+                left_wheel.detach();
+                right_wheel.detach();
+                delay(2000);
+                right_wheel.attach(9);
+                left_wheel.attach(10);
+                if( savedPeople == 3){
+                    left_wheel.detach();
+                    right_wheel.detach();
+                }
+            }
             if (navigation.hasNextTurn())
             {
-                digitalWrite(LED_BUILTIN, HIGH);
-                int turn = navigation.nextTurn(savedPeople);
+                
+                //digitalWrite(LED_BUILTIN, HIGH);
+                int turn = navigation.nextTurn();
+                
                 Serial.println(turn);
 
                 if (turn == 0)
@@ -355,19 +386,7 @@ void Drive::LineFollowing(){
       
 }
 
-/*void Drive::BasicLineFollowing(){
-    if (rightSensor < LIGHT_THRESHOLD && leftSensor < LIGHT_THRESHOLD && middleSensor < LIGHT_THRESHOLD)    
-        stop();
-    else if (rightSensor > LIGHT_THRESHOLD && leftSensor > LIGHT_THRESHOLD && middleSensor > LIGHT_THRESHOLD)    
-        stop();
-    else if (rightSensor < LIGHT_THRESHOLD && leftSensor < LIGHT_THRESHOLD)
-        driveForward();        
-    else if(rightSensor > LIGHT_THRESHOLD)
-        turnSlightlyRight();
-    else if (leftSensor > LIGHT_THRESHOLD)
-        turnSlightlyLeft();
-    
-}*/
+
 
 int Drive::controller(){
     uint16_t position = qtrCentral.readLineBlack(centralSensors);
