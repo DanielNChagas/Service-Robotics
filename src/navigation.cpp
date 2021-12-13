@@ -1,5 +1,6 @@
 #include "navigation.h"
 
+
 // Navigator
 
 Navigator::Navigator() : path(PATH_FIRST_PERSON, 3, 16)
