@@ -9,48 +9,27 @@ void Limbs::init()
     claw.write(CLAW_HALF_CLOSED_POS);
 }
 
-void Limbs::storePerson()
-{
-    down();
-    delay(1500);
-    grab();
-    delay(1500);
-    lift();
-    delay(1500);
-    drop();
-    delay(1500);
-    smallLift();
-}
-
-void Limbs::storeThirdPerson()
-{
-    down();
-    delay(1500);
-    grab();
-    delay(1500);
-    smallLift();
-}
-
+//the claw grabs
 void Limbs::grab()
 {
     claw.write(CLAW_CLOSED_POS);
 }
-
+//the claw is lifted
 void Limbs::lift()
 {
     axle.write(AXLE_UP_POS);
 }
-
+//the claw moves away from the storage
 void Limbs::smallLift()
 {
     axle.write(AXLE_HALF_UP_POS);
 }
-
+//the claw drops the cylinder
 void Limbs::drop()
 {
     claw.write(CLAW_HALF_CLOSED_POS);
 }
-
+//the claw moves down and opens
 void Limbs::down()
 {
     axle.write(AXLE_DOWN_POS);

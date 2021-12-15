@@ -21,8 +21,6 @@ private:
 public:
     void init();
 Servo claw;
-    void storePerson();
-    void storeThirdPerson();
 
     void grab();
     void lift();

@@ -59,28 +59,19 @@ public:
     boolean willShakePerson = false;
 
     void init();
-    void driveForward();
+
     void stop();
     void turnRight();
     void turnLeft();
     void uTurn();
-    void turnSlightlyLeft();
-    void turnSlightlyRight();
+
     bool missingLine();
 
     void getLineSensorValue();
     float getSonar();
     void LineFollowing();
-    void BasicLineFollowing();
 
-    int controller();
-
-    
-    void printNav();
-
-
-    
-    
+    int controller();   
 };
 
 
